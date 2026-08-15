@@ -6,7 +6,8 @@ Configurable, resumable OpenRouter runner for the Mastermind future-affinity exp
 
 ```powershell
 uv sync --all-groups
-$env:OPENROUTER_API_KEY = "..."
+# .env
+OPENROUTER_API_KEY="..."
 docker compose -f observability/compose.yaml up -d
 ```
 

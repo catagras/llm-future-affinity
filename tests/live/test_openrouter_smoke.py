@@ -6,15 +6,16 @@ import pytest
 from opentelemetry import trace
 
 from llm_future_affinity.config import ExecutionConfig, InferenceConfig, ModelConfig, RoutingConfig
+from llm_future_affinity.credentials import openrouter_api_key
 from llm_future_affinity.openrouter import OpenRouterClient
 from llm_future_affinity.telemetry import NullTelemetry
 
 
 @pytest.mark.live
 async def test_live_openrouter_single_completion() -> None:
-    api_key = os.environ.get("OPENROUTER_API_KEY")
+    api_key = openrouter_api_key()
     if not api_key:
-        pytest.skip("OPENROUTER_API_KEY is not set")
+        pytest.skip("OPENROUTER_API_KEY is not set in .env or the environment")
     model = ModelConfig(
         model_family="smoke",
         model_id=os.environ.get("OPENROUTER_SMOKE_MODEL", "openai/gpt-5.6-luna"),

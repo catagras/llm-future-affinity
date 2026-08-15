@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import os
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -12,6 +11,7 @@ from opentelemetry.trace import Span
 from tqdm import tqdm
 
 from llm_future_affinity.config import LoadedConfig
+from llm_future_affinity.credentials import openrouter_api_key
 from llm_future_affinity.debug import DebugWriter
 from llm_future_affinity.domain import GameRecord, Track
 from llm_future_affinity.game import load_games
@@ -106,7 +106,7 @@ async def execute_plan(
         if not selected:
             return SchedulerResult(rows=[], admission_stopped=False, forced=False, reason=None)
 
-        key = api_key or os.environ.get("OPENROUTER_API_KEY")
+        key = api_key or openrouter_api_key()
         if not key:
             raise ValueError("OPENROUTER_API_KEY is required for --execute")
         if not disable_otel and loaded.config.observability.enabled_for_execute:
