@@ -1,0 +1,13 @@
+services:
+  otel-lgtm:
+    image: grafana/otel-lgtm:latest
+    container_name: llm-future-affinity-otel
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+      - "4317:4317"
+      - "4318:4318"
+      - "13133:13133"
+    volumes:
+      - ../otel-data:/data
+

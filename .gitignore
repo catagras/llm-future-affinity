@@ -1,0 +1,16 @@
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+__pycache__/
+*.py[cod]
+outputs/*
+!outputs/.gitkeep
+debug/*
+!debug/.gitkeep
+otel-data/
+.env
+

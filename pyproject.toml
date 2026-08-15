@@ -1,0 +1,69 @@
+[project]
+name = "llm-future-affinity"
+version = "0.1.0"
+description = "Configurable OpenRouter runner for the LLM future-affinity experiment"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "httpx>=0.28.1",
+    "opentelemetry-api>=1.38.0",
+    "opentelemetry-exporter-otlp-proto-http>=1.38.0",
+    "opentelemetry-sdk>=1.38.0",
+    "portalocker>=3.2.0",
+    "pydantic>=2.12.0",
+    "pyyaml>=6.0.2",
+    "tqdm>=4.67.1",
+    "typer>=0.19.0",
+]
+
+[project.scripts]
+future-affinity = "llm_future_affinity.cli:app"
+
+[dependency-groups]
+dev = [
+    "mypy>=1.18.0",
+    "pytest>=8.4.0",
+    "pytest-asyncio>=1.2.0",
+    "pytest-cov>=7.0.0",
+    "respx>=0.22.0",
+    "ruff>=0.13.0",
+    "types-tqdm>=4.67.0.20250809",
+    "types-pyyaml>=6.0.12.20250915",
+]
+
+[build-system]
+requires = ["uv_build>=0.9.0,<0.10.0"]
+build-backend = "uv_build"
+
+[tool.ruff]
+line-length = 120
+target-version = "py314"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "ASYNC", "RUF"]
+
+[tool.ruff.format]
+quote-style = "double"
+line-ending = "lf"
+
+[tool.mypy]
+python_version = "3.14"
+strict = true
+files = ["src", "tests"]
+
+[tool.pytest.ini_options]
+addopts = "-ra --strict-markers --cov=llm_future_affinity --cov-report=term-missing"
+asyncio_mode = "auto"
+testpaths = ["tests"]
+markers = [
+    "live: makes paid calls to the live OpenRouter API; skipped unless --run-live is supplied",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["llm_future_affinity"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+fail_under = 85
