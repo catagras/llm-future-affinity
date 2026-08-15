@@ -301,7 +301,7 @@ execution:
 observability:
   enabled_for_execute: true
   otlp_endpoint: http://localhost:4318
-  health_endpoint: http://localhost:13133
+  health_endpoint: http://localhost:13133/ready
   service_name: llm-future-affinity
   flush_timeout_seconds: 15
 ```

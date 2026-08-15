@@ -97,7 +97,7 @@ def config_dict() -> dict[str, Any]:
         "observability": {
             "enabled_for_execute": True,
             "otlp_endpoint": "http://localhost:4318",
-            "health_endpoint": "http://localhost:13133",
+            "health_endpoint": "http://localhost:13133/ready",
             "service_name": "test",
             "flush_timeout_seconds": 1,
         },

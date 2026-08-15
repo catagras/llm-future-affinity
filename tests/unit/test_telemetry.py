@@ -12,7 +12,7 @@ from llm_future_affinity.telemetry import OtelTelemetry
 def otel_config() -> ObservabilityConfig:
     return ObservabilityConfig(
         otlp_endpoint="http://otel.test:4318",
-        health_endpoint="http://otel.test:13133",
+        health_endpoint="http://otel.test:13133/ready",
         service_name="test",
         flush_timeout_seconds=0.1,
     )
@@ -20,7 +20,7 @@ def otel_config() -> ObservabilityConfig:
 
 @respx.mock
 async def test_otel_preflight_success_and_span_ids(monkeypatch: pytest.MonkeyPatch) -> None:
-    respx.get("http://otel.test:13133").mock(return_value=httpx.Response(200))
+    respx.get("http://otel.test:13133/ready").mock(return_value=httpx.Response(200))
     telemetry = OtelTelemetry(otel_config())
     await telemetry.preflight()
     span = telemetry.start_span("test", attributes={"value": [1, 2], "none": None})
@@ -39,7 +39,7 @@ async def test_otel_preflight_success_and_span_ids(monkeypatch: pytest.MonkeyPat
 
 @respx.mock
 async def test_otel_preflight_failure() -> None:
-    respx.get("http://otel.test:13133").mock(return_value=httpx.Response(503))
+    respx.get("http://otel.test:13133/ready").mock(return_value=httpx.Response(503))
     telemetry = OtelTelemetry(otel_config())
     with pytest.raises(RuntimeError, match="unavailable"):
         await telemetry.preflight()

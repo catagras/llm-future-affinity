@@ -132,7 +132,7 @@ class ExecutionConfig(StrictModel):
 class ObservabilityConfig(StrictModel):
     enabled_for_execute: bool = True
     otlp_endpoint: str = "http://localhost:4318"
-    health_endpoint: str = "http://localhost:13133"
+    health_endpoint: str = "http://localhost:13133/ready"
     service_name: NonEmptyString = "llm-future-affinity"
     flush_timeout_seconds: PositiveFloat = 15
 

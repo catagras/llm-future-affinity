@@ -11,7 +11,7 @@ OPENROUTER_API_KEY="..."
 docker compose -f observability/compose.yaml up -d
 ```
 
-Grafana is available at <http://localhost:3000>. OTLP/HTTP is exposed on port 4318 and collector health on 13133.
+Grafana is available at <http://localhost:3000>. OTLP/HTTP is exposed on port 4318 and collector readiness at <http://localhost:13133/ready>.
 
 ## Commands
 
