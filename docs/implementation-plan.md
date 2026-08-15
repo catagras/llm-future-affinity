@@ -264,6 +264,7 @@ models:
   luna:
     model_family: openai-gpt-5.6
     model_id: openai/gpt-5.6-luna
+    rpm: 9
     routing:
       endpoint_slug: openai
       quantizations: null
@@ -315,6 +316,7 @@ Local validation will occur during both dry runs and real runs:
 - all required sections and fields exist;
 - the selected model key exists;
 - model IDs and exact provider-endpoint slugs are non-empty;
+- model `rpm` is a positive integer when supplied; omitted `rpm` means unlimited;
 - track keys are exactly A/B/C/D;
 - every track has an I2 identity and clause;
 - `code_length` and credits are positive integers;

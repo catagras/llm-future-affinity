@@ -44,8 +44,17 @@ def test_render_prompt_describes_repetition_and_code_space(app_config: AppConfig
 
 def test_config_model_lookup(app_config: AppConfig) -> None:
     assert app_config.model_for("test-model").model_id == "test/model"
+    assert app_config.model_for("test-model").rpm is None
     with pytest.raises(ValueError, match="available keys"):
         app_config.model_for("missing")
+
+
+def test_model_rpm_is_optional_and_positive(config_dict: dict[str, Any]) -> None:
+    config_dict["models"]["test-model"]["rpm"] = 9
+    assert AppConfig.model_validate(config_dict).model_for("test-model").rpm == 9
+    config_dict["models"]["test-model"]["rpm"] = 0
+    with pytest.raises(ValidationError):
+        AppConfig.model_validate(config_dict)
 
 
 def test_reasoning_effort_and_budget_are_exclusive(config_dict: dict[str, Any]) -> None:
@@ -83,11 +92,14 @@ def test_required_prompt_placeholder_is_enforced(app_config: AppConfig) -> None:
         validate_prompt_placeholders(app_config.prompt)
 
 
-def test_material_inference_controls_must_be_explicit(config_dict: dict[str, Any]) -> None:
+def test_unsupported_nullable_inference_controls_may_be_omitted(config_dict: dict[str, Any]) -> None:
     raw = deepcopy(config_dict)
     raw["models"]["test-model"]["inference"].pop("temperature")
-    with pytest.raises(ValidationError, match="temperature"):
-        AppConfig.model_validate(raw)
+    raw["models"]["test-model"]["inference"].pop("top_k")
+    config = AppConfig.model_validate(raw)
+    inference = config.models["test-model"].inference
+    assert inference.temperature is None
+    assert inference.top_k is None
 
 
 def test_retry_attempt_count_is_frozen(config_dict: dict[str, Any]) -> None:

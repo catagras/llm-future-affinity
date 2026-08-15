@@ -71,6 +71,7 @@ models:
   luna:
     model_family: openai-gpt-5.6
     model_id: openai/gpt-5.6-luna
+    rpm: 9
     routing:
       endpoint_slug: openai
       quantizations: null
@@ -78,9 +79,6 @@ models:
       require_parameters: true
     inference:
       max_tokens: 4096
-      temperature: 0
-      top_p: 1.0
-      top_k: null
       min_p: null
       seed: null
       reasoning:

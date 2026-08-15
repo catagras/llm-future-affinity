@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import time
 from collections.abc import Mapping
 from typing import Any
 
@@ -53,6 +54,7 @@ def make_client(
     telemetry: RecordingTelemetry | None = None,
     sleep: Any = None,
     debug: bool = False,
+    clock: Any = None,
 ) -> OpenRouterClient:
     async def no_sleep(_: float) -> None:
         return None
@@ -65,6 +67,7 @@ def make_client(
         sleep=sleep or no_sleep,
         base_url="https://openrouter.test/api/v1",
         debug=debug,
+        clock=clock or time.monotonic,
     )
 
 
@@ -214,6 +217,36 @@ async def test_retries_429_then_succeeds(app_config: AppConfig) -> None:
     assert len(reply.attempts) == 2
     assert reply.attempts[0].error_category == "rate_limit"
     assert delays == [0.001]
+    await client.close()
+
+
+@respx.mock
+async def test_model_rpm_paces_request_attempts(app_config: AppConfig) -> None:
+    app_config.models["test-model"].rpm = 2
+    route = respx.post("https://openrouter.test/api/v1/chat/completions").mock(
+        side_effect=[
+            httpx.Response(200, json=success_response()),
+            httpx.Response(200, json=success_response()),
+            httpx.Response(200, json=success_response()),
+        ]
+    )
+    current = 0.0
+    delays: list[float] = []
+
+    def clock() -> float:
+        return current
+
+    async def advance(delay: float) -> None:
+        nonlocal current
+        delays.append(delay)
+        current += delay
+
+    client = make_client(app_config, sleep=advance, clock=clock)
+    await client.complete([], trace.INVALID_SPAN, {})
+    await client.complete([], trace.INVALID_SPAN, {})
+    await client.complete([], trace.INVALID_SPAN, {})
+    assert route.call_count == 3
+    assert delays == [30.0, 30.0]
     await client.close()
 
 

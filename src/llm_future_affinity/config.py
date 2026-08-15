@@ -90,18 +90,19 @@ class InferenceConfig(BaseModel):
     model_config = ConfigDict(extra="allow")
 
     max_tokens: PositiveInt
-    temperature: float | None = Field(ge=0)
-    top_p: float | None = Field(ge=0, le=1)
-    top_k: int | None = Field(ge=0)
-    min_p: float | None = Field(ge=0, le=1)
-    seed: int | None
-    reasoning: ReasoningConfig | None
-    thinking: ThinkingConfig | None
+    temperature: float | None = Field(default=None, ge=0)
+    top_p: float | None = Field(default=None, ge=0, le=1)
+    top_k: int | None = Field(default=None, ge=0)
+    min_p: float | None = Field(default=None, ge=0, le=1)
+    seed: int | None = None
+    reasoning: ReasoningConfig | None = None
+    thinking: ThinkingConfig | None = None
 
 
 class ModelConfig(StrictModel):
     model_family: NonEmptyString
     model_id: NonEmptyString
+    rpm: PositiveInt | None = None
     routing: RoutingConfig
     inference: InferenceConfig
 

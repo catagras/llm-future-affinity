@@ -18,6 +18,7 @@ from llm_future_affinity.telemetry import Telemetry, sanitize_for_audit
 
 BASE_URL = "https://openrouter.ai/api/v1"
 Sleep = Callable[[float], Awaitable[None]]
+Clock = Callable[[], float]
 
 
 class OpenRouterError(RuntimeError):
@@ -34,6 +35,29 @@ class ApiError(OpenRouterError):
     pass
 
 
+class _RequestRateLimiter:
+    """Pace request starts for one model client when an RPM cap is configured."""
+
+    def __init__(self, rpm: int | None, sleep: Sleep, clock: Clock = time.monotonic) -> None:
+        self._interval = 60.0 / rpm if rpm is not None else None
+        self._sleep = sleep
+        self._clock = clock
+        self._next_request_at: float | None = None
+        self._lock = asyncio.Lock()
+
+    async def wait(self) -> None:
+        if self._interval is None:
+            return
+        async with self._lock:
+            now = self._clock()
+            if self._next_request_at is not None:
+                delay = self._next_request_at - now
+                if delay > 0:
+                    await self._sleep(delay)
+            now = self._clock()
+            self._next_request_at = max(self._next_request_at or now, now) + self._interval
+
+
 class OpenRouterClient:
     def __init__(
         self,
@@ -47,6 +71,7 @@ class OpenRouterClient:
         random_source: random.Random | None = None,
         base_url: str = BASE_URL,
         debug: bool = False,
+        clock: Clock = time.monotonic,
     ) -> None:
         self.model = model
         self.execution = execution
@@ -55,6 +80,7 @@ class OpenRouterClient:
         self.random: random.Random = random_source or random.Random()
         self.base_url = base_url.rstrip("/")
         self.debug = debug
+        self._rate_limiter = _RequestRateLimiter(model.rpm, sleep, clock)
         self._owns_client = http_client is None
         self.http = http_client or httpx.AsyncClient(timeout=execution.request_timeout_seconds)
         self.headers = {
@@ -178,6 +204,7 @@ class OpenRouterClient:
         error_category: str | None = None
         error_message: str | None = None
         try:
+            await self._rate_limiter.wait()
             response = await self.http.post(
                 f"{self.base_url}/chat/completions",
                 headers=self.headers,

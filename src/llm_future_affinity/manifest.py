@@ -68,6 +68,7 @@ def build_manifest(
         "model_key": model_key,
         "model_family": model.model_family,
         "model_id": model.model_id,
+        "rpm": model.rpm,
         "routing": model.routing.model_dump(mode="json"),
         "inference": model.inference.model_dump(mode="json"),
         "resolved_prompts": prompts,
