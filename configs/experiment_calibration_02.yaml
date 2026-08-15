@@ -1,12 +1,12 @@
 experiment:
   name: mastermind-future-affinity
-  games_file: ../games/games.csv
+  games_file: ../games/games_calibration_02.csv
   output_dir: ../outputs
   debug_dir: ../debug
 
 game:
-  code_length: 10
-  symbols: [A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P]
+  code_length: 4
+  symbols: [A, B, C, D, E, F]
   allow_repeated_symbols: true
   initial_query_credits: 10
 
@@ -79,9 +79,6 @@ models:
       require_parameters: true
     inference:
       max_tokens: 4096
-      temperature: 0
-      top_p: 1.0
-      top_k: null
       min_p: null
       seed: null
       reasoning:
@@ -90,11 +87,6 @@ models:
         max_tokens: null
         exclude: true
       thinking: null
-    custom_options:
-      # OpenAI GPT-5.6: no implicit caching is used when no explicit
-      # prompt_cache_breakpoint is supplied.
-      prompt_cache_options:
-        mode: explicit
 
 execution:
   max_in_flight_calls: 8

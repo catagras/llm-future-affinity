@@ -137,6 +137,7 @@ class OpenRouterClient:
 
     def build_payload(self, messages: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
         inference = without_none(self.model.inference.model_dump(mode="json"))
+        custom_options = without_none(self.model.custom_options)
         routing: dict[str, Any] = {
             "order": [self.model.routing.endpoint_slug],
             "only": [self.model.routing.endpoint_slug],
@@ -151,6 +152,7 @@ class OpenRouterClient:
             "stream": False,
             "provider": routing,
             **inference,
+            **custom_options,
         }
 
     async def complete(

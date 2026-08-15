@@ -57,6 +57,24 @@ def test_model_rpm_is_optional_and_positive(config_dict: dict[str, Any]) -> None
         AppConfig.model_validate(config_dict)
 
 
+def test_model_custom_options_are_preserved(config_dict: dict[str, Any]) -> None:
+    config_dict["models"]["test-model"]["custom_options"] = {
+        "prompt_cache_options": {"mode": "explicit"},
+        "prompt_cache_key": "test",
+    }
+    model = AppConfig.model_validate(config_dict).model_for("test-model")
+    assert model.custom_options == {
+        "prompt_cache_options": {"mode": "explicit"},
+        "prompt_cache_key": "test",
+    }
+
+
+def test_model_custom_options_cannot_override_standard_fields(config_dict: dict[str, Any]) -> None:
+    config_dict["models"]["test-model"]["custom_options"] = {"temperature": 0.5}
+    with pytest.raises(ValidationError, match="temperature"):
+        AppConfig.model_validate(config_dict)
+
+
 def test_reasoning_effort_and_budget_are_exclusive(config_dict: dict[str, Any]) -> None:
     raw = deepcopy(config_dict)
     raw["models"]["test-model"]["inference"]["reasoning"]["max_tokens"] = 10

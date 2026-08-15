@@ -9,7 +9,7 @@ from typing import Any
 
 from opentelemetry.trace import Span
 
-from llm_future_affinity.config import AppConfig
+from llm_future_affinity.config import AppConfig, ModelConfig
 from llm_future_affinity.domain import Action, GameRecord, HttpAttempt, RunStatus, SubmissionType, Track, Usage
 from llm_future_affinity.game import calculate_feedback, score_submission
 from llm_future_affinity.manifest import utc_now
@@ -268,7 +268,7 @@ class ConversationSession:
             cost_total_complete=cost_complete,
             cache_hit_detected=self.cache_hit_detected,
             prompt_hash=prompt_hash(self.initial_prompt),
-            inference_settings=self.model.inference.model_dump(mode="json"),
+            inference_settings=_inference_settings(self.model),
             routing_settings=self.model.routing.model_dump(mode="json"),
             run_status=status,
             analysis_eligible=eligible,
@@ -407,3 +407,10 @@ def _attempt_summary(attempt: HttpAttempt) -> dict[str, Any]:
 
 def _routing_token(value: str) -> str:
     return "".join(character for character in value.lower() if character.isalnum())
+
+
+def _inference_settings(model: ModelConfig) -> dict[str, Any]:
+    settings = model.inference.model_dump(mode="json")
+    if model.custom_options:
+        settings["custom_options"] = model.custom_options
+    return settings

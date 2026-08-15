@@ -180,6 +180,19 @@ def test_build_payload_pins_routing_and_drops_nulls(app_config: AppConfig) -> No
     assert payload["reasoning"]["effort"] == "low"
 
 
+def test_build_payload_includes_model_custom_options(app_config: AppConfig) -> None:
+    app_config.models["test-model"].custom_options = {
+        "prompt_cache_options": {"mode": "explicit"},
+        "prompt_cache_key": "calibration",
+        "omitted": None,
+    }
+    client = make_client(app_config)
+    payload = client.build_payload([])
+    assert payload["prompt_cache_options"] == {"mode": "explicit"}
+    assert payload["prompt_cache_key"] == "calibration"
+    assert "omitted" not in payload
+
+
 @respx.mock
 async def test_successful_completion_records_usage_and_audit(app_config: AppConfig) -> None:
     route = respx.post("https://openrouter.test/api/v1/chat/completions").mock(

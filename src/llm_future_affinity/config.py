@@ -105,6 +105,18 @@ class ModelConfig(StrictModel):
     rpm: PositiveInt | None = None
     routing: RoutingConfig
     inference: InferenceConfig
+    custom_options: dict[str, Any] = Field(default_factory=dict)
+
+    @model_validator(mode="after")
+    def validate_custom_options(self) -> Self:
+        reserved = {"model", "messages", "stream", "provider"}
+        inference_fields = set(self.inference.model_dump(mode="json"))
+        collisions = reserved.union(inference_fields).intersection(self.custom_options)
+        if collisions:
+            raise ValueError(
+                "model.custom_options cannot override request or inference fields: " + ", ".join(sorted(collisions))
+            )
+        return self
 
 
 class RetryConfig(StrictModel):
