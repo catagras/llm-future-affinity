@@ -168,6 +168,7 @@ async def test_preflight_rejects_endpoint_parameter_and_quantization_mismatch(ap
 
 def test_build_payload_pins_routing_and_drops_nulls(app_config: AppConfig) -> None:
     client = make_client(app_config)
+    app_config.models["test-model"].inference.max_tokens = None
     payload = client.build_payload([{"role": "user", "content": "hello"}])
     assert payload["provider"] == {
         "order": ["test-provider/exact"],
@@ -176,6 +177,7 @@ def test_build_payload_pins_routing_and_drops_nulls(app_config: AppConfig) -> No
         "require_parameters": True,
     }
     assert payload["temperature"] == 0
+    assert "max_tokens" not in payload
     assert "thinking" not in payload
     assert payload["reasoning"]["effort"] == "low"
 
@@ -341,6 +343,24 @@ async def test_malformed_success_is_api_error(app_config: AppConfig) -> None:
     client = make_client(app_config)
     with pytest.raises(ApiError, match="malformed"):
         await client.complete([], trace.INVALID_SPAN, {})
+    await client.close()
+
+
+@respx.mock
+async def test_truncated_completion_is_classified_and_preserves_usage(app_config: AppConfig) -> None:
+    body = success_response()
+    body["choices"][0]["finish_reason"] = "length"
+    body["choices"][0]["message"]["content"] = None
+    respx.post("https://openrouter.test/api/v1/chat/completions").mock(return_value=httpx.Response(200, json=body))
+    client = make_client(app_config)
+
+    with pytest.raises(ApiError, match="output truncated") as captured:
+        await client.complete([], trace.INVALID_SPAN, {})
+
+    attempt = captured.value.attempts[0]
+    assert attempt.error_category == "output_truncated"
+    assert attempt.error_message == "model output truncated at the configured token limit"
+    assert attempt.usage == Usage(10, 3, 1, 2, 1, 13, 0.01)
     await client.close()
 
 

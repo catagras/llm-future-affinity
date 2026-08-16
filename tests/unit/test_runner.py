@@ -9,7 +9,7 @@ from opentelemetry.trace import Span
 
 from llm_future_affinity.config import AppConfig
 from llm_future_affinity.domain import GameRecord, HttpAttempt, ModelReply, RunStatus, Track, Usage
-from llm_future_affinity.openrouter import OpenRouterClient, RetryExhausted
+from llm_future_affinity.openrouter import ApiError, OpenRouterClient, RetryExhausted
 from llm_future_affinity.runner import ConversationSession
 from llm_future_affinity.telemetry import NullTelemetry
 
@@ -178,6 +178,27 @@ async def test_retry_error_is_saved_and_opens_breaker(app_config: AppConfig) -> 
     assert row.error_category == "timeout"
     assert not row.token_totals_complete
     assert not row.cost_total_complete
+
+
+async def test_output_truncation_error_preserves_accounting(app_config: AppConfig) -> None:
+    truncated = attempt()
+    truncated.error_category = "output_truncated"
+    truncated.error_message = "model output truncated at the configured token limit"
+    truncated.usage = Usage(input_tokens=10, output_tokens=3, total_tokens=13, cost_usd=0.01)
+    value = session(app_config, FakeClient([ApiError(truncated.error_message, [truncated])]))
+
+    await value.step()
+
+    row = value.to_output_row()
+    assert row.run_status is RunStatus.API_ERROR
+    assert row.error_category == "output_truncated"
+    assert row.error_message == truncated.error_message
+    assert row.total_input_tokens == 10
+    assert row.total_output_tokens == 3
+    assert row.total_tokens == 13
+    assert row.total_cost_usd == 0.01
+    assert row.token_totals_complete
+    assert row.cost_total_complete
 
 
 async def test_transport_retry_count_counts_retried_attempts_once(app_config: AppConfig) -> None:

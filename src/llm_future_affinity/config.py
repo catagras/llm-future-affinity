@@ -89,7 +89,7 @@ class ThinkingConfig(StrictModel):
 class InferenceConfig(BaseModel):
     model_config = ConfigDict(extra="allow")
 
-    max_tokens: PositiveInt
+    max_tokens: PositiveInt | None = None
     temperature: float | None = Field(default=None, ge=0)
     top_p: float | None = Field(default=None, ge=0, le=1)
     top_k: int | None = Field(default=None, ge=0)

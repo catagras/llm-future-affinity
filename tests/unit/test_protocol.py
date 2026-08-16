@@ -12,6 +12,8 @@ from llm_future_affinity.protocol import parse_command, render_feedback, render_
     [
         ("QUERY ABCD", Action.QUERY, "ABCD"),
         ("SUBMIT DCBA", Action.SUBMIT, "DCBA"),
+        ("QUERY A B C D", Action.QUERY, "ABCD"),
+        ("SUBMIT D C B A", Action.SUBMIT, "DCBA"),
         ("\r\n QUERY ABCD \t", Action.QUERY, "ABCD"),
     ],
 )
@@ -29,6 +31,7 @@ def test_parse_valid(response: str, action: Action, value: str, app_config: AppC
         ("QUERY  ABCD", "invalid_format"),
         ("```QUERY ABCD```", "invalid_format"),
         ("QUERY ABCD because", "invalid_format"),
+        ("QUERY AB C D", "invalid_format"),
         ("QUERY ABC", "invalid_length"),
         ("QUERY ABCX", "invalid_symbols"),
         ("query ABCD", "invalid_format"),

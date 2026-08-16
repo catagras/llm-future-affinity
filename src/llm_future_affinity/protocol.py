@@ -7,17 +7,30 @@ import re
 from llm_future_affinity.config import GameConfig, PromptConfig
 from llm_future_affinity.domain import Action, Feedback, ParsedCommand
 
+_INVALID_FORMAT_MESSAGE = "response must be exactly QUERY <symbols> or SUBMIT <symbols>"
+
 
 def parse_command(response: str, game: GameConfig) -> ParsedCommand:
     stripped = response.strip()
-    match = re.fullmatch(r"(QUERY|SUBMIT) ([^\s]+)", stripped)
+    match = re.fullmatch(r"(QUERY|SUBMIT) ([^\s].*)", stripped)
     if match is None:
         return ParsedCommand(
             valid=False,
             error_code="invalid_format",
-            error_message="response must be exactly QUERY <symbols> or SUBMIT <symbols>",
+            error_message=_INVALID_FORMAT_MESSAGE,
         )
-    action_text, value = match.groups()
+    action_text, raw_value = match.groups()
+    symbols = raw_value.split(" ")
+    if len(symbols) > 1:
+        if any(len(symbol) != 1 for symbol in symbols):
+            return ParsedCommand(
+                valid=False,
+                error_code="invalid_format",
+                error_message=_INVALID_FORMAT_MESSAGE,
+            )
+        value = "".join(symbols)
+    else:
+        value = raw_value
     if len(value) != game.code_length:
         return ParsedCommand(
             valid=False,

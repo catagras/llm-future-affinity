@@ -260,11 +260,10 @@ class OpenRouterClient:
     async def _model_reply(self, response: httpx.Response, attempts: list[HttpAttempt]) -> ModelReply:
         try:
             body = response.json()
-            message = body["choices"][0]["message"]
-            content = message["content"]
         except (KeyError, IndexError, TypeError, ValueError) as error:
             raise ApiError(f"malformed OpenRouter response: {error}", attempts) from error
-        if not isinstance(body, dict) or not isinstance(message, dict) or not isinstance(content, str):
+
+        if not isinstance(body, dict):
             raise ApiError("malformed OpenRouter response types", attempts)
 
         usage = normalize_usage(body.get("usage"))
@@ -285,6 +284,20 @@ class OpenRouterClient:
         final_attempt.observed_provider = observed_provider
         final_attempt.observed_endpoint = observed_endpoint
         final_attempt.observed_quantization = observed_quantization
+
+        try:
+            message = body["choices"][0]["message"]
+            content = message["content"]
+        except (KeyError, IndexError, TypeError, ValueError) as error:
+            raise ApiError(f"malformed OpenRouter response: {error}", attempts) from error
+        if not isinstance(message, dict) or not isinstance(content, str):
+            if _finish_reason(body) == "length":
+                error_message = "model output truncated at the configured token limit"
+                final_attempt.error_category = "output_truncated"
+                final_attempt.error_message = error_message
+                raise ApiError(error_message, attempts)
+            raise ApiError("malformed OpenRouter response types", attempts)
+
         return ModelReply(
             content=content,
             assistant_message=dict(message),
@@ -450,6 +463,13 @@ def _int(value: Any) -> int | None:
 
 def _float(value: Any) -> float | None:
     return float(value) if isinstance(value, int | float) else None
+
+
+def _finish_reason(body: dict[str, Any]) -> str | None:
+    choices = body.get("choices")
+    if not isinstance(choices, list) or not choices or not isinstance(choices[0], dict):
+        return None
+    return _string(choices[0].get("finish_reason"))
 
 
 def _utc_now() -> str:

@@ -114,10 +114,12 @@ def test_unsupported_nullable_inference_controls_may_be_omitted(config_dict: dic
     raw = deepcopy(config_dict)
     raw["models"]["test-model"]["inference"].pop("temperature")
     raw["models"]["test-model"]["inference"].pop("top_k")
+    raw["models"]["test-model"]["inference"]["max_tokens"] = None
     config = AppConfig.model_validate(raw)
     inference = config.models["test-model"].inference
     assert inference.temperature is None
     assert inference.top_k is None
+    assert inference.max_tokens is None
 
 
 def test_retry_attempt_count_is_frozen(config_dict: dict[str, Any]) -> None:
