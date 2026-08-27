@@ -1,0 +1,9 @@
+model_key,n_track_d,mean_d_credits,median_d_credits,pct_d_zero_credits,pct_d_at_least_2_credits,gate1_status
+deepseek,20,0.25,0.0,0.8,0.05,supported
+gemini-flash,20,0.05,0.0,0.95,0.0,supported
+gemini-pro,20,0.4,0.0,0.65,0.05,supported
+grok-4.6,20,0.0,0.0,1.0,0.0,supported
+haiku,20,1.25,1.0,0.0,0.2,not_supported
+luna,20,0.05,0.0,0.95,0.0,supported
+maverick,20,2.45,2.0,0.2,0.65,not_supported
+scout,20,5.2,3.5,0.05,0.8,not_supported

@@ -1,0 +1,9 @@
+model_key,attempted_runs,selected_runs,completed_runs,analytically_eligible_runs,clean_eligible_runs,invalid_submissions,api_provider_failures,cache_hits,runs_with_transport_retries,runs_missing_reasoning_tokens
+deepseek,85,80,80,80,80,51,0,0,0,70
+gemini-flash,83,80,80,80,80,1,0,0,0,0
+gemini-pro,80,80,80,80,80,0,0,0,0,0
+grok-4.6,82,80,80,80,80,37,0,0,0,0
+haiku,86,80,80,80,80,58,0,0,0,0
+luna,80,80,80,80,80,38,0,0,0,0
+maverick,97,80,80,80,80,80,0,0,0,80
+scout,82,80,80,80,80,37,0,0,4,80

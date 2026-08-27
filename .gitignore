@@ -7,7 +7,6 @@ coverage.xml
 htmlcov/
 __pycache__/
 *.py[cod]
-outputs/*
 !outputs/.gitkeep
 debug/*
 !debug/.gitkeep

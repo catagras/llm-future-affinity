@@ -257,9 +257,9 @@ models:
   minimax:
     model_family: minimax-m3
     model_id: minimax/minimax-m3
-    rpm: 20
+    rpm: 60
     routing:
-      endpoint_slug: deepinfra/fp8
+      endpoint_slug: venice/fp8
       quantizations: null
       allow_fallbacks: false
       require_parameters: true
@@ -278,7 +278,7 @@ models:
     model_id: deepseek/deepseek-v4-flash-0731
     rpm: 20
     routing:
-      endpoint_slug: deepinfra/fp8
+      endpoint_slug: baidu/fp8
       quantizations: null
       allow_fallbacks: false
       require_parameters: true
@@ -293,16 +293,16 @@ models:
         exclude: true
       thinking: null 
   qwen:
-    model_family: qwen3.8-27b
-    model_id: qwen/qwen3.8-27b
-    rpm: 20
+    model_family: qwen3.7-flash
+    model_id: qwen/qwen3.7-flash
+    rpm: 60
     routing:
-      endpoint_slug: akashml/bf16
+      endpoint_slug: alibaba
       quantizations: null
       allow_fallbacks: false
       require_parameters: true
     inference:
-      max_tokens: 4096
+      max_tokens: 8192
       min_p: null
       seed: null
       reasoning:

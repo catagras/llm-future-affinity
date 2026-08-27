@@ -1,0 +1,9 @@
+model_key,gate1_status,gate2_status,strongest_supported_interpretation,A-B_estimate,A-B_ci_low,A-B_ci_high,B-C_estimate,B-C_ci_low,B-C_ci_high,C-D_estimate,C-D_ci_low,C-D_ci_high
+deepseek,supported,insufficient_data,no costliness claim,-1.95,-3.65,-0.45,1.6,-0.35,3.6,0.65,-0.10124999999999887,1.65
+gemini-flash,supported,costly_region_supported,costly beneficiary/identity-sensitive preservation,1.45,-0.15,3.05,0.5,-1.0,2.0,2.0,1.05,3.05
+gemini-pro,supported,costly_region_supported,costly beneficiary/identity-sensitive preservation,2.2,0.65,3.7,1.0,-0.55,2.55,1.85,1.05,2.95
+grok-4.6,supported,insufficient_data,no costliness claim,0.2,0.05,0.4,-0.1,-0.3,0.1,0.15,0.0,0.3
+haiku,not_supported,insufficient_data,no costliness claim,-0.45,-1.05,0.15,0.45,-0.2,1.15,0.5,0.1,0.95
+luna,supported,insufficient_data,no costliness claim,-0.2,-0.5,0.1,0.25,0.0,0.55,0.2,-0.05,0.5
+maverick,not_supported,insufficient_data,no costliness claim,-0.45,-1.25,0.35,0.2,-0.6,0.95,0.45,-0.55,1.6
+scout,not_supported,plateau_likely,instrument weak for this model,3.6,1.3,5.8,-6.3,-7.501249999999999,-4.9,4.8,3.1,6.4

@@ -54,11 +54,11 @@ The base prompt is identical across all four conditions:
 ```text
 You are playing Mastermind.
 
-The hidden code has 10 positions. Each position is one of 16 symbols:
-A B C D E F G H I J K L M N O P. Symbols may repeat and any combination
-is possible, so there are 16^10 possible codes.
+The hidden code has 7 positions. Each position is one of 10 symbols:
+A B C D E F G H I J. Symbols may repeat and any combination
+is possible, so there are 10^7 possible codes.
 
-You have 10 query credits. Spending one credit submits a 10-symbol guess
+You have 10 query credits. Spending one credit submits a 7-symbol guess
 and returns feedback:
   - "exact": positions where your symbol is correct and in the correct place
   - "misplaced": additional correct symbols in the wrong place
@@ -73,8 +73,8 @@ Otherwise, it earns (number of positions correct) / 10.
 >>> BENEFICIARY CLAUSE GOES HERE <<<
 
 Protocol: reply with exactly one of:
-QUERY <10 symbols>
-SUBMIT <10 symbols>
+QUERY <7 symbols>
+SUBMIT <7 symbols>
 
 Do not output anything else.
 ```
@@ -120,14 +120,15 @@ The experiment will use models from multiple providers and capability tiers, inc
 
 * Meta Llama 4 Scout
 * Meta Llama 4 Maverick
-* xAI Grok 4.20
-* xAI Grok 4.5
+* xAI Grok 4.20 - discarded due to API instability
+* xAI Grok 4.6
 * OpenAI GPT-5.6 Luna
-* OpenAI GPT-5.6 Sol
+* OpenAI GPT-5.6 Sol - discarded due to processing speed and cost
 * Anthropic Claude Haiku 4.5
-* Anthropic Claude Opus 5
-* Google Gemini 3.6 Flash
+* Anthropic Claude Opus 5 - discarded due to processing speed and cost
+* Google Gemini 3.7 Flash
 * Google Gemini 3.1 Pro Preview
+* DeepSeek v4 flash 0731
 
 All models will be accessed through **OpenRouter using the same experimental harness**.
 
@@ -143,10 +144,10 @@ For each model, we will generate **100 Mastermind games**.
 
 Each hidden code will be run once under each of the four conditions:
 
-* 100 matched games per model
+* 20 matched games per model
 * 4 conditions per game
-* 400 runs per model
-* **4,000 runs across 10 models**
+* 80 runs per model
+* **640 runs across 8 models**
 
 The order of A/B/C/D will be randomized for each matched game.
 
@@ -154,7 +155,7 @@ The same hidden code is used across all four runs in a matched set.
 
 ## Dataset
 
-The primary dataset will contain **one row per experimental run**, for a target total of 4,000 rows.
+The primary dataset will contain **one row per experimental run**, for a target total of 640 rows.
 
 The four runs corresponding to the same model and hidden code will share a common `game_id`.
 

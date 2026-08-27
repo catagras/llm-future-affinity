@@ -1,0 +1,72 @@
+{
+  "analysis_timestamp_utc": "2026-08-16T12:11:09.024396+00:00",
+  "git_commit": "dccaa08b8b85c78751e852925ccbf19adebd5957",
+  "python": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "input_files": [
+    {
+      "path": "C:\\Development\\apart_research\\llm-future-affinity\\outputs\\experiment\\deepseek.csv",
+      "sha256": "79b0ee0206ffb05d7a7739770ebcf208b25d4e16b0804f09cbf4295c7f87840c"
+    },
+    {
+      "path": "C:\\Development\\apart_research\\llm-future-affinity\\outputs\\experiment\\gemini-flash.csv",
+      "sha256": "97b6b4680126c5304628226ec8e53637331e8152fb1ab1bbc5f092f5bc20b114"
+    },
+    {
+      "path": "C:\\Development\\apart_research\\llm-future-affinity\\outputs\\experiment\\gemini-pro.csv",
+      "sha256": "05f6373e6802baf24984cc0aeb49b44949b4ced4ffb03956babd47a7b4be24e4"
+    },
+    {
+      "path": "C:\\Development\\apart_research\\llm-future-affinity\\outputs\\experiment\\grok-4.6.csv",
+      "sha256": "ba3b190fd7290f36ea5a7efe03356e8db8791aedfcdff02c7f14fed42f83e1ec"
+    },
+    {
+      "path": "C:\\Development\\apart_research\\llm-future-affinity\\outputs\\experiment\\haiku.csv",
+      "sha256": "91af69558453eb77fed257fc59d42be8be8d2024b95a98635ef68e0d24297179"
+    },
+    {
+      "path": "C:\\Development\\apart_research\\llm-future-affinity\\outputs\\experiment\\luna.csv",
+      "sha256": "597a45aef6fa6dd3462bad450f4fdfbb7e381760eea8740720da3c90a820a058"
+    },
+    {
+      "path": "C:\\Development\\apart_research\\llm-future-affinity\\outputs\\experiment\\maverick.csv",
+      "sha256": "63217d52913d7b5d3aab86bed20180a50d2449de3a4bfaa74c67b377c8033271"
+    },
+    {
+      "path": "C:\\Development\\apart_research\\llm-future-affinity\\outputs\\experiment\\scout.csv",
+      "sha256": "64013ffd0b87aacfeb6241aa74ad32e9e00964bfa36f200ec3fbff6b21191e57"
+    }
+  ],
+  "config_path": "C:\\Development\\apart_research\\llm-future-affinity\\configs\\experiment_config.yaml",
+  "settings": {
+    "data_paths": [
+      "outputs/experiment/*.csv"
+    ],
+    "recursive_data_paths": false,
+    "track_order": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ],
+    "primary_contrast": [
+      "A",
+      "B"
+    ],
+    "secondary_contrasts": [
+      [
+        "B",
+        "C"
+      ],
+      [
+        "C",
+        "D"
+      ]
+    ],
+    "n_bootstrap": 10000,
+    "n_permutations": 100000,
+    "random_seed": 20260816,
+    "clean_only": true,
+    "minimum_reasoning_observations": 20
+  }
+}
